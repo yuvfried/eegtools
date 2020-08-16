@@ -2,6 +2,9 @@ import plotly.graph_objects as go
 # import analysis
 from itertools import cycle
 
+MU_STR = '\u03BC'
+MICROVOLT_STR = MU_STR+"V"
+
 
 def add_baseline(fig, baseline=0, signal=None):
     """
@@ -79,7 +82,7 @@ Initialization of a figure representing a trial
     # can be changed by the user later, out of the function, or by sending kwargs
     fig.update_layout(template="plotly_white",
                       xaxis_title="time (ms)",
-                      yaxis_title="signal",
+                      yaxis_title=f"signal ({MICROVOLT_STR})",
                       **kwargs)
 
     add_baseline(fig, baseline, signal)
