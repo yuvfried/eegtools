@@ -5,6 +5,11 @@ from itertools import cycle
 MU_STR = '\u03BC'
 MICROVOLT_STR = MU_STR+"V"
 
+cmap = {"Control":
+            {"line":"royalblue", "error":"rgba(65,105,225,0.25)"},
+        "ASD":
+            {"line":"yellowgreen", "error":"rgba(154,205,50 ,0.25)"}}
+
 
 def add_baseline(fig, baseline=0, signal=None):
     """
