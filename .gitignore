@@ -15,5 +15,10 @@ venv.bak/
 
 # config
 config.yaml
+/config.yaml
 .yaml
 /.yaml
+.yml
+/.yml
+config.yml
+/config.yml
