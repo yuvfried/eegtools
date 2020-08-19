@@ -14,4 +14,4 @@ env.bak/
 venv.bak/
 
 # config
-.yaml
+config.yaml
