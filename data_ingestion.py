@@ -1,6 +1,5 @@
 import scipy.io as sio
 import yaml
-import os
 
 
 class MatIngest:
