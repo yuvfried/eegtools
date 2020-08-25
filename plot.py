@@ -5,7 +5,7 @@ from itertools import cycle
 MU_STR = '\u03BC'
 MICROVOLT_STR = MU_STR+"V"
 
-cmap = {"Control":
+CMAP = {"Control":
             {"line":"royalblue", "error":"rgba(65,105,225,0.25)"},
         "ASD":
             {"line":"yellowgreen", "error":"rgba(154,205,50 ,0.25)"}}
@@ -101,8 +101,11 @@ Initialization of a figure representing a trial
     return fig
 
 
-def go_signal(signal, timeline, **kwargs):
-    return go.Scatter(x=timeline, y=signal, **kwargs)
+def go_signal(signal, timeline, group=None, noise=None,**kwargs):
+    if group is None:
+        return go.Scatter(x=timeline, y=signal, **kwargs)
+    return go.Scatter(x=timeline, y=signal,
+                      line_color=CMAP[group]['line'], **kwargs)
 
 # TODO: move all this file's functions to a Python Class
 #  in order to let the user insert a default timeline
