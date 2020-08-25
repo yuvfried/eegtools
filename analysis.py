@@ -1,3 +1,4 @@
+import plot as plt
 import numpy as np
 from data_ingestion import mat_data
 
@@ -10,21 +11,47 @@ def _adjust_python_idx(idx):
 
 class Signal:
 
-    def __init__(self, values, timeline=TIMELINE, noise=None):
+    def __init__(self, values, timeline=TIMELINE, noise=None, name=None, group=None):
         self.values = values
         self.timeline = timeline
         self.noise = noise
+        self.name = name
+        self.group = group
+        self.__gos = self.__init_gos()
+
+    def __init_gos(self):
+        gos = plt.go_signal(self.values, self.timeline)
+        if self.noise is not None:
+            gos.update(error_y=dict(
+                type="data",
+                array=self.noise/2,
+                visible=True))
+        if self.group is not None:
+            gos.update(line_color=plt.CMAP[self.group]['line'])
+            gos.update(error_y_color=plt.CMAP[self.group]['error'])
+
+        return gos
+
+    def get_gos(self, **kwargs):
+        self.__gos.update(**kwargs)
+        return self.__gos
+
+    def show(self, **kwargs):
+        fig = plt.init_trial(**kwargs)
+        fig.add_trace(self.get_gos())
+        fig.show()
 
 
 class EEGSignal(Signal):
 
     def __init__(self, name, trial, block, timeline=TIMELINE, data=mat_data):
-        self.name = name
         self.sub_id = np.argwhere(data['subjects'] == name).flatten()[0]
+        self.group = data['group'][self.sub_id]
         self.trial = _adjust_python_idx(trial)
         self.block = _adjust_python_idx(block)
         self.values = data['s2'][self.sub_id, :, self.trial, self.block]
-        super().__init__(self.values, timeline)
+        super().__init__(values=self.values, timeline=timeline,
+                         name=name, group=self.group)
 
 
 class ERPSignal:
@@ -32,6 +59,7 @@ class ERPSignal:
     def __init__(self, name, trials, blocks, timeline=TIMELINE, data=mat_data):
         self.name = name
         self.sub_id = np.argwhere(data['subjects'] == name).flatten()[0]
+        self.group = data['group'][self.sub_id]
         self.timeline = timeline
         # init trial-block range
         self.trial, self.block, self.trial_start, self.block_start, \
@@ -61,7 +89,7 @@ class ERPSignal:
         if self.block is not None:
             if self.trial is not None:
                 raise TypeError("A stochastic combination of trials and blocks"
-                                "was passed. Please use EEGSignal(*args).")
+                                "was passed. Please use EEGSignal.")
             else:
                 self.avg_over = "trial"
                 return data['s2'][self.sub_id, :,
@@ -84,13 +112,8 @@ class ERPSignal:
             self.__signal = np.nanmean(self.data, axis=1)
             self.__noise = np.std(self.data, axis=1)
 
-        return Signal(self.__signal, self.timeline, self.__noise)
-
-    # def signal(self):
-    #     if self.__signal is None:
-    #         raise Exception("Use fit method in order to output ERP signal")
-    #     else:
-    #         return Signal(self.__signal, self.timeline, self.__noise)
+        return Signal(values=self.__signal, timeline=self.timeline,
+                      noise=self.__noise, group=self.group)
 
 
 class Component:
