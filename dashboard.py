@@ -1,6 +1,4 @@
-import plot
-import numpy as np
-from analysis import EEGSignal, ERPSignal
+from analysis import EEGSignal, ERPSignal, GroupSignal
 
 
 def sub_board(fig, name, trial_start, block_start, trial_end, block_end):
@@ -24,33 +22,26 @@ def sub_board(fig, name, trial_start, block_start, trial_end, block_end):
     fig.add_trace(gos)
     fig.show()
 
-def group_erp_block_trial_range(fig, group_name, block_range, trial_range, timeline, cmap):
-    """
-Group ERP Dynamics over a given Range of Blocks and Trials
-(averaging order: trial-->block-->subject)
-    @param fig: plotly figure
-    @param group_name: str {'Control','ASD'}
-    @param block_range:
-    @param trial_range:
-    @param timeline:
-    @param cmap:
-    """
-    idx = get_groups_idx(data)[group_name]
-    sig = np.nanmean(data['s2'][idx,  # subjects range
-                     :,  # time
-                     trial_range[0]:trial_range[1],  # trials
-                     block_range[0]:block_range[1]],  # blocks
-                     axis=2)  # averaging over trials
 
-    sig = np.nanmean(sig, axis=2)  # averaging over blocks
-    sig = np.nanmean(sig, axis=0)  # averaging over subjects
+def group_board(fig, group, trial_start, block_start, trial_end, block_end):
+    if (not trial_end) or (trial_start==trial_end):
+        trials = trial_start
+        trial_name = trial_start
+    else:
+        trials = (trial_start, trial_end)
+        trial_name = f'{trial_start}-{trial_end}'
+    if (not block_end) or (block_start==block_end):
+        blocks = block_start
+        block_name = block_start
+    else:
+        blocks = (block_start, block_end)
+        block_name = f'{block_start}-{block_end}'
 
-    gos = plot.go_signal(sig, timeline,
-                         name=
-                         f'{group_name}, {block_range[0] - block_range[1]}, {trial_range[0]}-{trial_range[1]}',
-                         line_color=cmap[group_name])
+    grouped = GroupSignal(group, trials, blocks)
+    sig = grouped.fit()
+    name = f'{trial_name}|{block_name}'
+    gos = sig.get_gos(name=name)
     fig.add_trace(gos)
-
     fig.show()
 
 
