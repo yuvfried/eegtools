@@ -1,5 +1,6 @@
 import scipy.io as sio
 import yaml
+import numpy as np
 
 
 class MatIngest:
@@ -46,13 +47,9 @@ def get_groups_idx(data, cont_name='Control', asd_name='ASD',
     return {cont_name:cont_ind, asd_name:asd_ind}
 
 
-def get_group_partial_data(data, group, trial_range, block_range):
-    idx = get_groups_idx(data)[group]
-    return data['s2'][idx,:,trial_range[0]:trial_range[1],
-           block_range[0]:block_range[1]]
-
-
 with open(r"eegtools\config.yaml", 'r') as f:
     doc = yaml.full_load(f)
     mat_data = MatIngest(filename=doc['mat_filename'],
                      data_name=doc['data_attr_name']).create_data_obj()
+    # next line defined 3d-array with shape (#subjects,#trials,#blocks)
+    mat_data['null'] = np.argwhere(np.all(np.isnan(mat_data['s2']), axis=1))
