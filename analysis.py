@@ -19,6 +19,10 @@ class Signal:
         self.group = group
         self.__gos = self.__init_gos()
 
+    def isnull(self):
+        if np.all(np.isnan(self.values)):
+            return True
+
     def __init_gos(self):
         gos = plt.go_signal(self.values, self.timeline)
         if self.noise is not None:
@@ -32,6 +36,7 @@ class Signal:
 
         return gos
 
+# TODO: gos must has a name for legend
     def get_gos(self, **kwargs):
         self.__gos.update(**kwargs)
         return self.__gos
@@ -54,6 +59,7 @@ class EEGSignal(Signal):
                          name=name, group=self.group)
 
 
+# TODO: pass string indicator of trials and blocks to Signal (for plotting)
 class ERPSignal:
 
     def __init__(self, name, trials, blocks, timeline=TIMELINE, data=mat_data):
@@ -114,6 +120,29 @@ class ERPSignal:
 
         return Signal(values=self.__signal, timeline=self.timeline,
                       noise=self.__noise, group=self.group)
+
+
+class GroupSignal:
+
+    def __init__(self, group, trials, blocks, timeline=TIMELINE, data=mat_data):
+        self.names = data['subjects'][data['group']==group]
+        self.group = group
+        self.trials = trials
+        self.blocks = blocks
+        self.timeline = timeline
+
+    def fit(self):
+        if isinstance(self.trials, int) and isinstance(self.blocks, int):
+            lst_of_vals = [EEGSignal(name, self.trials, self.blocks).values
+                           for name in self.names]
+        else:
+            lst_of_vals = [ERPSignal(name, self.trials, self.blocks).fit().values
+                       for name in self.names]
+        sub_vals_arr = np.stack(lst_of_vals, axis=0)
+        mean_vals = np.nanmean(sub_vals_arr, axis=0)
+        std_vals = np.nanstd(sub_vals_arr, axis=0)
+        return Signal(values=mean_vals,noise=std_vals,
+                      timeline=self.timeline, group=self.group)
 
 
 class Component:
