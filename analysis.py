@@ -1,5 +1,6 @@
 import plot as plt
 import numpy as np
+import scipy.stats.sem as sem
 from data_ingestion import mat_data
 
 TIMELINE = mat_data['time']
@@ -182,6 +183,12 @@ class Component:
         else:
             y = self.values - self.baseline
         return np.trapz(y=y, x=self.timeline, **kwargs)
+
+def nansem(a, **kwargs):
+    '''
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html
+    '''
+    return sem(a, nanpolicy="omit", **kwargs)
 
 
 def softmax(x):
