@@ -1,6 +1,6 @@
 import plot as plt
 import numpy as np
-import scipy.stats.sem as sem
+from scipy.stats import sem
 from data_ingestion import mat_data
 
 TIMELINE = mat_data['time']
