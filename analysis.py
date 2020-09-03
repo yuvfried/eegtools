@@ -114,7 +114,7 @@ class ERPSignal:
     def fit(self):
         if self.avg_over is None:
             self.__signal = np.nanmean(self.data, axis=(1, 2))
-            self.__noise = np.nanstd(self.data, axis=(1, 2))
+            self.__noise = nansem(self.data, axis=(1, 2))
         else:  # trial or block are both will be on axis=1
             self.__signal = np.nanmean(self.data, axis=1)
             self.__noise = np.std(self.data, axis=1)
@@ -141,7 +141,7 @@ class GroupSignal:
                        for name in self.names]
         sub_vals_arr = np.stack(lst_of_vals, axis=0)
         mean_vals = np.nanmean(sub_vals_arr, axis=0)
-        std_vals = np.nanstd(sub_vals_arr, axis=0)
+        std_vals = nansem(sub_vals_arr, axis=0)
         return Signal(values=mean_vals,noise=std_vals,
                       timeline=self.timeline, group=self.group)
 
@@ -188,7 +188,7 @@ def nansem(a, **kwargs):
     '''
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html
     '''
-    return sem(a, nanpolicy="omit", **kwargs)
+    return sem(a, nan_policy="omit", **kwargs).data
 
 
 def softmax(x):
