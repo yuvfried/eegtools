@@ -51,5 +51,6 @@ with open(r"eegtools\config.yaml", 'r') as f:
     doc = yaml.full_load(f)
     mat_data = MatIngest(filename=doc['mat_filename'],
                      data_name=doc['data_attr_name']).create_data_obj()
-    # next line defined 3d-array with shape (#subjects,#trials,#blocks)
+    # next line defined 2d-array: rows are empty signals and columns are
+    # sub_id, trial, block
     mat_data['null'] = np.argwhere(np.all(np.isnan(mat_data['s2']), axis=1))
