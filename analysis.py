@@ -168,6 +168,7 @@ class Component:
     def abs_sum(self):
         return np.nansum(np.abs(self.values - self.baseline))
 
+    # TODO: bugfix - RuntimeWarning: invalid value encountered in sqrt
     def rms(self, **kwargs):
         return np.sqrt(np.nanmean(self.values - self.baseline, **kwargs))
 
@@ -188,8 +189,10 @@ def nansem(a, **kwargs):
     '''
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html
     '''
-    return sem(a, nan_policy="omit", **kwargs).data
-
+    # bug (memoryview obj)
+    # return sem(a, nan_policy="omit", **kwargs).data
+    n = len(a.flatten())
+    return np.nanstd(a, **kwargs)/np.sqrt(n)
 
 def softmax(x):
     return np.exp(x) / np.nansum(np.exp(x))
