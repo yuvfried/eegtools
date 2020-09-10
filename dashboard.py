@@ -1,4 +1,8 @@
+import plot
+import widgets
+from ipywidgets import interactive, fixed
 from analysis import EEGSignal, ERPSignal, GroupSignal
+
 
 
 def sub_board(fig, name, trial_start, block_start, trial_end, block_end):
@@ -45,49 +49,45 @@ def group_board(fig, group, trial_start, block_start, trial_end, block_end):
     fig.show()
 
 
-# # averaging chronological order: trial-->block-->subject
-# def subject_erp_block_trial_range(fig, data, sub_id, block, trial, timeline, cmap,
-#                                    block_end=False, trial_end=False, show_err="blocks"):
-#     idx = np.argwhere(data['subjects'] == sub_id).flatten()[0]
-#     group = data['group'][idx]
-#     block -= 1  # adjust python index
-#     trial -= 1  # adjust python index
-#
-#     # multiple blocks and trials
-#     if not block_end:
-#         block_end = block+1
-#     else:
-#         block_end -= 1
-#     if not trial_end:
-#         trial_end = trial+1
-#     else:
-#         trial_end -= 1
-#
-#     # gather data
-#     sig = data['s2'][idx, :, trial:trial_end, block:block_end]
-#
-#     # error bars
-#     if show_err=="blocks":
-#         err = np.nanstd(sig, axis=2)
-#     elif show_err=="trials":
-#         err = np.nanstd(sig, axis=1)
-#     else:
-#         err = np.zeros(512)
-#
-#     # averaging
-#     if sig.shape[1] > 1:   # multiple trials
-#         sig = np.nanmean(sig, axis=1)  # averaging over trials
-#     if sig.shape[1] > 1:   # multiple blocks
-#         sig = np.nanmean(sig, axis=1)  # averaging over blocks
-#
-#     sig = sig.reshape(512,)
-#
-#     gos = plot.go_signal(sig, timeline,
-#                          error_y=dict(
-#                              type="data", array=err / 2, visible=True, color=cmap[group]["error"]),
-#                          name=f'{sub_id} {block} {trial}',
-#                          line_color=plot.cmap[group]["line"],
-#                          showlegend=True)
-#     fig.add_trace(gos)
-#
-#     fig.show()
+def dash_sub():
+    fig = plot.init_trial()
+    title_text = "Subject Dynamic Within a Given Block-trial Ranges"
+    fig.update_layout(title={
+        'y': 0.9,
+        'x': 0.5,
+        'xanchor': 'center',
+        'yanchor': 'top',
+        'text': title_text},
+        font={'family': 'Arial'},
+        legend_title_text='Sub | Trials | Blocks')
+
+    out = interactive(sub_board, {'manual': True},
+                                 fig=fixed(fig),
+                                 name=widgets.sub_name_dropdown,
+                                 trial_start=widgets.trial_start_slider,
+                                 block_start=widgets.block_start_slider,
+                                 trial_end=widgets.trial_end_slider,
+                                 block_end=widgets.block_end_slider)
+    return out
+
+
+def dash_group():
+    fig = plot.init_trial()
+    title_text = "Group Dynamic Within a Given Block-trial Ranges"
+    fig.update_layout(title={
+        'y': 0.9,
+        'x': 0.5,
+        'xanchor': 'center',
+        'yanchor': 'top',
+        'text': title_text},
+        font={'family': 'Arial'},
+        legend_title_text='Trials|Blocks')
+
+    out = interactive(group_board, {'manual': True},
+                                 fig=fixed(fig),
+                                 group=widgets.group_name_dropdown,
+                                 trial_start=widgets.trial_start_slider,
+                                 block_start=widgets.block_start_slider,
+                                 trial_end=widgets.trial_end_slider,
+                                 block_end=widgets.block_end_slider)
+    return out
