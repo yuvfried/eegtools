@@ -26,6 +26,12 @@ class MatIngest:
         self.file = sio.loadmat(filename,
                                 struct_as_record=False, squeeze_me=True)
         self.struct = self.file[data_name]
+        # self.mat_filename = None
+        # self.data_attr_name = None
+
+    # def config(self, mat_filename, data_attr_name):
+    #     self.mat_filename = mat_filename
+    #     self.data_attr_name = data_attr_name
 
     def create_data_obj(self):
         """
@@ -36,6 +42,10 @@ class MatIngest:
         d = {}
         for attr in struct._fieldnames:
             d[attr] = getattr(struct, attr)
+        # next line defined 2d-array: rows are empty signals and columns are
+        # sub_id, trial, block
+        d['null'] = np.argwhere(np.all(
+            np.isnan(d['s2']), axis=1))
         return d
 
 
@@ -47,10 +57,11 @@ def get_groups_idx(data, cont_name='Control', asd_name='ASD',
     return {cont_name:cont_ind, asd_name:asd_ind}
 
 
-with open(r"eegtools\CONFIG.yaml", 'r') as f:
+with open("CONFIG.yaml", 'r') as f:
     doc = yaml.full_load(f)
     mat_data = MatIngest(filename=doc['mat_filename'],
-                     data_name=doc['data_attr_name']).create_data_obj()
-    # next line defined 2d-array: rows are empty signals and columns are
-    # sub_id, trial, block
-    mat_data['null'] = np.argwhere(np.all(np.isnan(mat_data['s2']), axis=1))
+                         data_name=doc['data_attr_name']).create_data_obj()
+
+
+
+
