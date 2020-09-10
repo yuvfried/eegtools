@@ -47,7 +47,7 @@ def get_groups_idx(data, cont_name='Control', asd_name='ASD',
     return {cont_name:cont_ind, asd_name:asd_ind}
 
 
-with open(r"eegtools\config.yaml", 'r') as f:
+with open(r"eegtools\CONFIG.yaml", 'r') as f:
     doc = yaml.full_load(f)
     mat_data = MatIngest(filename=doc['mat_filename'],
                      data_name=doc['data_attr_name']).create_data_obj()
