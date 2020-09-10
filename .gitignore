@@ -24,4 +24,6 @@ config.yml
 /config.yml
 
 # notebooks
-/notebooks/
+/.ipynb_checkpoints/
+/notebooks/.ipynb_checkpoints/
+/notebooks/code_path.txt
