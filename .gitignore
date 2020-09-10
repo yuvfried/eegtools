@@ -14,11 +14,14 @@ env.bak/
 venv.bak/
 
 # config
-config.yaml
-/config.yaml
+CONFIG.yaml
+/CONFIG.yaml
 .yaml
 /.yaml
 .yml
 /.yml
 config.yml
 /config.yml
+
+# notebooks
+/notebooks/
