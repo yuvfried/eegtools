@@ -136,13 +136,25 @@ class GroupSignal:
         if isinstance(self.trials, int) and isinstance(self.blocks, int):
             lst_of_vals = [EEGSignal(name, self.trials, self.blocks).values
                            for name in self.names]
+            sub_vals_arr = np.stack(lst_of_vals, axis=0)
+            # in case of grouping eeg:
+            # noise is set to be the group's average signal
+            noise = nansem(sub_vals_arr, axis=0)
+
         else:
-            lst_of_vals = [ERPSignal(name, self.trials, self.blocks).fit().values
+            lst_of_sigs = [ERPSignal(name, self.trials, self.blocks).fit()
                        for name in self.names]
-        sub_vals_arr = np.stack(lst_of_vals, axis=0)
+            lst_of_vals = [sig.values for sig in lst_of_sigs]
+            lst_of_noise = [sig.noise for sig in lst_of_sigs]
+            sub_vals_arr = np.stack(lst_of_vals, axis=0)
+            # in case of grouping erp:
+            # noise is set to be the group's average noise
+            sub_noise_arr = np.stack(lst_of_noise, axis=0)
+            noise = np.nanmean(sub_noise_arr, axis=0)
+
         mean_vals = np.nanmean(sub_vals_arr, axis=0)
-        std_vals = nansem(sub_vals_arr, axis=0)
-        return Signal(values=mean_vals,noise=std_vals,
+
+        return Signal(values=mean_vals, noise=noise,
                       timeline=self.timeline, group=self.group)
 
 
