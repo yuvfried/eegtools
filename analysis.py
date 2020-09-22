@@ -6,7 +6,7 @@ from data_ingestion import mat_data
 TIMELINE = mat_data['time']
 
 
-def _adjust_python_idx(idx):
+def adjust_python_idx(idx):
     return idx - 1
 
 
@@ -53,8 +53,8 @@ class EEGSignal(Signal):
     def __init__(self, name, trial, block, timeline=TIMELINE, data=mat_data):
         self.sub_id = np.argwhere(data['subjects'] == name).flatten()[0]
         self.group = data['group'][self.sub_id]
-        self.trial = _adjust_python_idx(trial)
-        self.block = _adjust_python_idx(block)
+        self.trial = adjust_python_idx(trial)
+        self.block = adjust_python_idx(block)
         self.values = data['s2'][self.sub_id, :, self.trial, self.block]
         super().__init__(values=self.values, timeline=timeline,
                          name=name, group=self.group)
@@ -79,16 +79,16 @@ class ERPSignal:
     def __unpack_range(self, pack, axis):
         if axis == "trials":
             if isinstance(pack, int):
-                self.trial = _adjust_python_idx(pack)
+                self.trial = adjust_python_idx(pack)
             else:
-                self.trial_start = _adjust_python_idx(pack[0])
-                self.trial_end = _adjust_python_idx(pack[1])
+                self.trial_start = adjust_python_idx(pack[0])
+                self.trial_end = adjust_python_idx(pack[1])
         if axis == "blocks":
             if isinstance(pack, int):
-                self.block = _adjust_python_idx(pack)
+                self.block = adjust_python_idx(pack)
             else:
-                self.block_start = _adjust_python_idx(pack[0])
-                self.block_end = _adjust_python_idx(pack[1])
+                self.block_start = adjust_python_idx(pack[0])
+                self.block_end = adjust_python_idx(pack[1])
 
     def __auto_set_data(self, trials, blocks, data):
         self.__unpack_range(trials, "trials")
