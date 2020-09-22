@@ -27,7 +27,8 @@ def sub_board(fig, name, trial_start, block_start, trial_end, block_end):
     fig.show()
 
 
-def group_board(fig, group, trial_start, block_start, trial_end, block_end):
+def group_board(fig, group, trial_start, block_start, trial_end, block_end,
+                color, linestyle):
     if (not trial_end) or (trial_start==trial_end):
         trials = trial_start
         trial_name = trial_start
@@ -43,8 +44,14 @@ def group_board(fig, group, trial_start, block_start, trial_end, block_end):
 
     grouped = GroupSignal(group, trials, blocks)
     sig = grouped.fit()
-    name = f'{trial_name}|{block_name}'
-    gos = sig.get_gos(name=name)
+    name = f'{group}|{trial_name}|{block_name}'
+
+    # color
+    rgb = plot.name_to_rgb(color)
+    gos = sig.get_gos(name=name, line_color=plot.read_rgb(rgb),
+                      error_y_color=plot.read_rgb(rgb, error=True))
+    #     linestyle
+
     fig.add_trace(gos)
     fig.show()
 
@@ -81,13 +88,15 @@ def dash_group():
         'yanchor': 'top',
         'text': title_text},
         font={'family': 'Arial'},
-        legend_title_text='Trials|Blocks')
+        legend_title_text='Group|Trials|Blocks')
 
-    out = interactive(group_board, {'manual': True},
-                                 fig=fixed(fig),
-                                 group=widgets.group_name_dropdown,
-                                 trial_start=widgets.trial_start_slider,
-                                 block_start=widgets.block_start_slider,
-                                 trial_end=widgets.trial_end_slider,
-                                 block_end=widgets.block_end_slider)
+    out = interactive(group_board, {'manual': True, 'manual_name': 'Plot'},
+                      fig=fixed(fig),
+                      group=widgets.group_name_dropdown,
+                      trial_start=widgets.trial_start_slider,
+                      block_start=widgets.block_start_slider,
+                      trial_end=widgets.trial_end_slider,
+                      block_end=widgets.block_end_slider,
+                      color=widgets.color,
+                      linestyle=fixed(None))
     return out
