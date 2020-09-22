@@ -1,6 +1,7 @@
 import ipywidgets
 from data_ingestion import mat_data as data
 import numpy as np
+import plot
 
 # TODO: append id to sub labels
 sub_name_dropdown_labels = list(zip(data['group'] + " " + data['subjects'], data['subjects']))
@@ -28,4 +29,15 @@ trial_start_slider = ipywidgets.SelectionSlider(
 trial_end_slider=ipywidgets.SelectionSlider(options=[False]+list(range(1,10+1)),
                           description='trial end',
                           value=False)
+
+lighter_slider = ipywidgets.IntSlider(value=4, min=1, max=5)
+
+color = ipywidgets.Combobox(
+    value='royalblue',
+    placeholder='Type Blue or Green to see options',
+    options=plot.CMAP['Control']['colornames']+plot.CMAP['ASD']['colornames'],
+    description='color:',
+    ensure_option=True
+)
+
 
