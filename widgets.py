@@ -41,3 +41,8 @@ color = ipywidgets.Combobox(
 )
 
 
+linestyle = ipywidgets.Dropdown(
+    value='solid',
+    options=['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
+)
+
