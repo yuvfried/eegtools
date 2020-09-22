@@ -1,14 +1,55 @@
 import plotly.graph_objects as go
 # import analysis
 from itertools import cycle
+from matplotlib import colors
 
 MU_STR = '\u03BC'
 MICROVOLT_STR = MU_STR+"V"
 
 CMAP = {"Control":
-            {"line":"royalblue", "error":"rgba(65,105,225,0.25)"},
+            {"line":"royalblue", "error":"rgba(65,105,225,0.25)",   # to be deprecated
+             'lighters':[(7, 16, 44),  # darkest
+                         (17, 40, 110),
+                         (28, 65, 176),
+                         (65,105,225),
+                         (145, 168, 238)],  # lightest
+             'colornames':['AliceBlue',
+                           'Blue',
+                           'CornflowerBlue',
+                           'DarkBlue',
+                           'DodgerBlue']},
         "ASD":
-            {"line":"yellowgreen", "error":"rgba(154,205,50 ,0.25)"}}
+            {"line":"yellowgreen", "error":"rgba(154,205,50 ,0.25)",   # to be deprecated
+             'lighters':[(61, 82, 20),  # darkest
+                         (107, 144, 35),
+                         (154, 205, 50),
+                         (194, 225, 132)],
+             'colornames':['DarkGreen',
+                           'DarkOliveGreen',
+                           'DarkSeaGreen',
+                           'Green',
+                           'GreenYellow']}}
+
+
+def name_to_rgb(name):
+    """
+Wrapper for matplotlib.colors.to_rgb converter
+    @param name: (str) HTML color name
+    @return: (tuple) HTML rgb
+    """
+    return colors.to_rgb(name)
+
+
+def read_rgb(rgb_tuple,error=False):
+    if not error:
+        alpha = 1
+    else:
+        alpha = 0.15
+    # from rgb to rgba
+    converter_lst = list(rgb_tuple)
+    converter_lst.append(alpha)
+    return f'rgba{tuple(converter_lst)}'
+
 
 
 def add_baseline(fig, baseline=0, signal=None):
