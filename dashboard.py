@@ -46,11 +46,13 @@ def group_board(fig, group, trial_start, block_start, trial_end, block_end,
     sig = grouped.fit()
     name = f'{group}|{trial_name}|{block_name}'
 
-    # color
-    rgb = plot.name_to_rgb(color)
-    gos = sig.get_gos(name=name, line_color=plot.read_rgb(rgb),
-                      error_y_color=plot.read_rgb(rgb, error=True))
-    #     linestyle
+    rgb = plot.name_to_rgb(color)   # color
+    gos = sig.get_gos(name=name,    # title in legend and hovering
+                      line_color=plot.read_rgb(rgb),
+                      line_dash=linestyle,
+                      error_y_color=plot.read_rgb(rgb, error=True),
+                      hovertemplate='<b>%{y:.3f}</b>' +     # format of hover
+                                    f'<sub>{plot.MICROVOLT_STR}</sub>')
 
     fig.add_trace(gos)
     fig.show()
@@ -81,14 +83,16 @@ def dash_sub():
 def dash_group():
     fig = plot.init_trial()
     title_text = "Group Dynamic Within a Given Block-trial Ranges"
-    fig.update_layout(title={
-        'y': 0.9,
-        'x': 0.5,
-        'xanchor': 'center',
-        'yanchor': 'top',
-        'text': title_text},
+    fig.update_layout(
+        title={
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top',
+            'text': title_text},
         font={'family': 'Arial'},
-        legend_title_text='Group|Trials|Blocks')
+        legend_title_text='Group|Trials|Blocks',
+        hovermode='x unified')
 
     out = interactive(group_board, {'manual': True, 'manual_name': 'Plot'},
                       fig=fixed(fig),
@@ -98,5 +102,5 @@ def dash_group():
                       trial_end=widgets.trial_end_slider,
                       block_end=widgets.block_end_slider,
                       color=widgets.color,
-                      linestyle=fixed(None))
+                      linestyle=widgets.linestyle)
     return out
