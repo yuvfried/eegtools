@@ -221,11 +221,14 @@ def insert_behave_data(data_obj, behave_path, eprime_patterns, id_map):
 
 with open("CONFIG.yaml", 'r') as f:
     doc = yaml.full_load(f)     # load configuration file
+    if not all(doc.values()):
+        print("Please fill all the fields in configuration file")
+        raise IOError
+
     MAT_FILENAME = doc['mat_filename']
     DATA_ATTR_NAME = doc['data_attr_name']
     BEHAVE_PATH = doc['behave_path']
     ID_MAP = doc['id_map']
-
     # Configured JSON of E-prime patterns for extraction
     EPRIME_PATTERNS = doc['eprime_patterns']
     with open(EPRIME_PATTERNS, 'r') as jf:
