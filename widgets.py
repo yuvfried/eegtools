@@ -36,10 +36,9 @@ color = ipywidgets.Combobox(
     value='royalblue',
     placeholder='Type Blue or Green to see options',
     options=plot.CMAP['Control']['colornames']+plot.CMAP['ASD']['colornames'],
-    description='color:',
+    description='color',
     ensure_option=True
 )
-
 
 linestyle = ipywidgets.Dropdown(
     value='solid',
