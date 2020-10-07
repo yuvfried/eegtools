@@ -1,0 +1,10 @@
+# Template of how configuration must be look like in order to run data extraction
+# Locate Here this file and remove "_template" (eegtools\CONFIG.yaml)
+# fill in the values for each field below
+
+data_attr_name: ### data attribute name in the Matlab structure ###
+mat_filename: ### path\and\filename\of\.mat file ###
+
+behave_path: ### path to folder of E-Prime behavioural data files ###
+eprime_patterns: ### path\and\filename of JSON file consists regex patterns for E-Prime .txt file data extraction ###
+id_map: ### path\and\filename to JSON dict of diffs between E-Prime subject_id's to Matlab ones ###
