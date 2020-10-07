@@ -14,6 +14,7 @@ env.bak/
 venv.bak/
 
 # config
+/config/
 CONFIG.yaml
 /CONFIG.yaml
 .yaml
@@ -29,3 +30,4 @@ config.yml
 /notebooks/code_path.txt
 # ignore whole notebooks folder (to be added later)
 /notebooks/
+
