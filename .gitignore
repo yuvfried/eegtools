@@ -27,3 +27,5 @@ config.yml
 /.ipynb_checkpoints/
 /notebooks/.ipynb_checkpoints/
 /notebooks/code_path.txt
+# ignore whole notebooks folder (to be added later)
+/notebooks/
